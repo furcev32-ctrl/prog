@@ -38,7 +38,7 @@ public enum DiceFace {
         return result.substring(Main.CUTTING_INDEX);
     }
 
-    public static DiceFace parseToDiceFace(String diceFaceAsString) {
+     public static DiceFace parseToDiceFace(String diceFaceAsString) {
         for (DiceFace diceFace : values()) {
             if (diceFaceAsString.contains(diceFace.toString())) {
                 return diceFace;
@@ -49,5 +49,21 @@ public enum DiceFace {
 
     public boolean hasGodPower() {
         return hasGodPower;
+    }
+
+    public Vector getVector() {
+        if(this.range == CLOSE) {
+            return new Vector(new int[]{this.fightPower, 0});
+        }
+        else if(this.range == RANGED) {
+            return new Vector(new int[]{0, this.fightPower});
+        }
+        else {
+            return null;
+        }
+    }
+
+    public FightType getFightType() {
+        return fightType;
     }
 }

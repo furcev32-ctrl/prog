@@ -1,28 +1,39 @@
 package edu.kit.informatik.entity;
 
-import edu.kit.informatik.Player;
+import edu.kit.informatik.Main;
 
-public abstract class GodFavor {
+public enum GodFavor {
+    TS("Thor's Strike"),
+    TT("Thrymr’s Theft "),
+    IR("Idun’s Regeneration");
 
+    private final String name;
     private int level;
-    private int cost;
 
-    public GodFavor(int level) {
+    GodFavor(String name) {
+        this.name = name;
+    }
+
+    public void setLevel(int level) {
         this.level = level;
     }
-    public abstract void executeEffect(Player actor, Player victim);
-    public abstract void calculateCost();
 
 
-    public void setCost(int cost) {
-        this.cost = cost;
+    public static String getRegex() {
+        StringBuilder result = new StringBuilder();
+        for (GodFavor favor: values()) {
+            result.append(Main.PIPE).append(favor.name());
+        }
+        return result.substring(Main.CUTTING_INDEX);
     }
 
-    public int getCost() {
-        return cost;
+    public static GodFavor parseToGodFavor(String godFavorAsString) {
+        for (GodFavor godFavor : values()) {
+            if (godFavorAsString.contains(godFavor.toString())) {
+                return godFavor;
+            }
+        }
+        return null;
     }
 
-    public int getLevel() {
-        return level;
-    }
 }

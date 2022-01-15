@@ -4,6 +4,7 @@ package edu.kit.informatik.ui;
 import edu.kit.informatik.Main;
 import edu.kit.informatik.OrlogGame;
 import edu.kit.informatik.entity.DiceFace;
+import edu.kit.informatik.entity.GodFavor;
 import edu.kit.informatik.exception.SemanticsException;
 
 import java.util.regex.Matcher;
@@ -24,24 +25,46 @@ public enum Command {
             return game.print();
         }
     },
-    ROLL(Main.ROLL + Main.SPACE + Main.ROLL_INPUT_PATTERN()) {
+    ROLL(Main.ROLL + Main.SPACE + "(" + Main.ROLL_INPUT_PATTERN + ")") {
         @Override
         String execute(Matcher input, OrlogGame game) throws SemanticsException {
 
             final DiceFace[] diceFaces = new DiceFace[Main.NUM_OF_ROLLS];
             final String[] diceFacesAsString = input.group(Main.FIRST_PARAMETER_INDEX).split(Main.SEMICOLON);
 
+            if (diceFacesAsString.length != 6) {
+               throw new SemanticsException("The roll accepts exact only 6 parameters.");
+            }
             for (int i = 0; i < diceFaces.length; i++) {
                 diceFaces[i] = DiceFace.parseToDiceFace(diceFacesAsString[i]);
+                if(diceFaces[i] == null) {
+                    throw new SemanticsException("The dice face name in the place " + i + " is wrong written.");
+                }
             }
 
             return game.roll(diceFaces);
+        }
+    },
+    GOD_FAVOR(Main.GOD_FAVOR + Main.SPACE + "(" + GodFavor.getRegex()
+            + Main.SEMICOLON + Main.NUM + ")") {
+        @Override
+        String execute(Matcher input, OrlogGame game) throws SemanticsException {
+            final String[] arguments = input.group(Main.FIRST_PARAMETER_INDEX).split(Main.SEMICOLON);
+            final GodFavor godFavor = GodFavor.parseToGodFavor(arguments[0]);
+            final int level = Integer.parseInt(arguments[1]);
+            return game.godfavor(godFavor, level);
         }
     },
     TURN(Main.TURN) {
         @Override
         String execute(Matcher input, OrlogGame game) throws SemanticsException {
             return game.turn();
+        }
+    },
+    EVALUATE(Main.EVALUATE){
+        @Override
+        String execute(Matcher input, OrlogGame game) throws SemanticsException {
+            return game.evaluate();
         }
     },
     QUIT(Main.QUIT) {

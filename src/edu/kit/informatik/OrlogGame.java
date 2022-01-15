@@ -2,10 +2,10 @@ package edu.kit.informatik;
 
 import edu.kit.informatik.entity.DiceFace;
 import edu.kit.informatik.entity.GamePhase;
+import edu.kit.informatik.entity.GodFavor;
 import edu.kit.informatik.exception.SemanticsException;
 
-import static edu.kit.informatik.entity.GamePhase.GOD_FAVOR_PHASE;
-import static edu.kit.informatik.entity.GamePhase.ROLLING_PHASE;
+import static edu.kit.informatik.entity.GamePhase.*;
 
 public class OrlogGame {
 
@@ -60,6 +60,37 @@ public class OrlogGame {
 
 
 
+    public String godfavor(GodFavor godFavor, int level) throws SemanticsException {
+        checkGodFavorConditions(godFavor, level);
+        godFavor.setLevel(level);
+        currentPlayer.chooseGodFavor(godFavor);
+
+        return Main.OK;
+    }
+
+
+    public String evaluate() throws SemanticsException {
+        checkEvaluate();
+
+        players[0].fight(players[1].getAttackVector());
+        players[1].fight(players[0].getAttackVector());
+
+
+        if (players[0].getLivePoints() == 0 && players[1].getLivePoints() == 0) {
+
+            return Main.DRAW;
+        }
+        else if (players[0].getLivePoints() == 0) {
+            return players[1].getName() + Main.SPACE + Main.WINS;
+        }
+        else if (players[1].getLivePoints() == 0) {
+            return players[0].getName() + Main.SPACE + Main.WINS;
+        }
+
+        return print();
+    }
+
+
     private int getArrIndexOfPlayer(Player player) {
 
         for(int i = 0; i < players.length; i++) {
@@ -105,7 +136,33 @@ public class OrlogGame {
 
     }
 
+
+    private void checkGodFavorConditions(GodFavor godFavor, int level) throws SemanticsException {
+        if (level < Main.MIN_GODFAVOR_LEVEL || level > Main.MAX_GODFAVOR_LEVEL) {
+            throw new SemanticsException("The god favor level should be between "
+                    + Main.MIN_GODFAVOR_LEVEL + " and " + Main.MAX_GODFAVOR_LEVEL + ".");
+        }
+
+    }
+
+    private void checkEvaluate() throws SemanticsException {
+        // TODO: 15.01.2022 could the second user execute the evaluate command in the Rolling phase.
+        if(currentPhase == EVALUATION_PHASE) {
+            throw new SemanticsException("The evaluation could be done only once.");
+        }
+        if(!isLastPlayer(currentPlayer)) {
+            throw new SemanticsException("You should give you turn to the next player. The last " +
+                    "player could execute the evaluate command.");
+        }
+
+    }
+
     private boolean isLastPlayer(Player player) {
         return getArrIndexOfPlayer(currentPlayer) == players.length - Main.SHIFTING_INDEX;
     }
+
+    private boolean isFirstPlayer(Player player) {
+        return getArrIndexOfPlayer(currentPlayer) == 0;
+    }
+
 }

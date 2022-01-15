@@ -7,16 +7,27 @@ import java.util.Scanner;
 import edu.kit.informatik.ui.Command;
 
 public class Main {
-    public static final String ERROR = "Error, ";
-    public static final String QUIT = "quit";
     public static final String PRINT = "print";
+    public static final String ROLL = "roll";
+    public static final String GOD_FAVOR = "godfavor";
+    public static final String QUIT = "quit";
+
+
+    public static final String ERROR = "Error, ";
     public static final String NEW_LINE = "\n";
     public static final int CUTTING_INDEX = 1;
-    public static final String ROLL = "roll";
+
     public static final String SPACE = " ";
     public static final int FIRST_PARAMETER_INDEX = 1;
+    public static final int MIN_GODFAVOR_LEVEL = 1;
+    public static final int MAX_GODFAVOR_LEVEL = 3;
+    public static final String EVALUATE = "evaluate";
+    public static final String DRAW = "draw";
+    public static final String WINS = "wins";
+
     private static final int NUM_OF_PLAYER = 2;
-    private static final String NUM = "[0-9]+";
+    public static final String NUM = "[0-9]+";
+    public static final String LEVEL_PATTERN = "1|2|3";
     public static final String PIPE = "|";
     public static final String OK = "OK";
     public static final String TURN = "turn";
@@ -24,14 +35,14 @@ public class Main {
     private static final String PLAYER_NAME_PATTERN = "^[^;| ]*$";
     public static final String SEMICOLON = ";";
     public static final int SHIFTING_INDEX = 1;
-    public static String ROLL_INPUT_PATTERN() {
-        StringBuilder pattern = new StringBuilder();
-        for (int i = 0; i < NUM_OF_ROLLS; i++) {
-            pattern.append(SEMICOLON).append(DiceFace.getRegex());
-        }
-        return pattern.substring(CUTTING_INDEX);
-    }
-
+//    public static String ROLL_INPUT_PATTERN() {
+//        StringBuilder pattern = new StringBuilder();
+//        for (int i = 0; i < NUM_OF_ROLLS; i++) {
+//            pattern.append(SEMICOLON).append(DiceFace.getRegex());
+//        }
+//        return pattern.substring(CUTTING_INDEX);
+//    }
+    public static final String ROLL_INPUT_PATTERN = "(" + DiceFace.getRegex() + PIPE + SEMICOLON + ")+";
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         OrlogGame game = null;
