@@ -19,8 +19,8 @@ public class Main {
 
     public static final String SPACE = " ";
     public static final int FIRST_PARAMETER_INDEX = 1;
-    public static final int MIN_GODFAVOR_LEVEL = 1;
-    public static final int MAX_GODFAVOR_LEVEL = 3;
+    public static final int MIN_GOD_FAVOR_LEVEL = 1;
+    public static final int MAX_GOD_FAVOR_LEVEL = 3;
     public static final String EVALUATE = "evaluate";
     public static final String DRAW = "draw";
     public static final String WINS = "wins";

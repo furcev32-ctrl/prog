@@ -1,12 +1,8 @@
 package edu.kit.informatik;
 
 import edu.kit.informatik.entity.DiceFace;
-import edu.kit.informatik.entity.FightType;
-import edu.kit.informatik.entity.GodFavor;
 import edu.kit.informatik.entity.Vector;
-
-import java.util.ArrayList;
-import java.util.Collections;
+import edu.kit.informatik.entity.GodFavor;
 
 import static edu.kit.informatik.entity.FightType.ATTACK;
 import static edu.kit.informatik.entity.FightType.DEFEND;
@@ -62,8 +58,8 @@ public class Player {
         return name;
     }
 
-    public GodFavor getGodFavor() {
-        return godFavor;
+    public int getGodPower() {
+        return godPower;
     }
 
     public Vector getAttackVector() {
@@ -84,4 +80,31 @@ public class Player {
     }
 
 
+    public void changeLifePointsBy(int amount) {
+        if (livePoints == 0 || livePoints > Integer.MAX_VALUE - amount) {
+            return;
+        }
+        livePoints = livePoints + amount;
+        livePoints = Math.max(livePoints, 0);
+    }
+
+
+    public void changeGodPowerBy(int amount) {
+        if (godPower == 0 || godPower > Integer.MAX_VALUE - amount) {
+            return;
+        }
+        godPower = godPower + amount;
+    }
+
+    public boolean hasEnoughPower(int cost) {
+        return godPower >= cost;
+    }
+
+    public GodFavor getGodFavor() {
+        return godFavor;
+    }
+
+    public void weakenBy(int amountOfWeaken) {
+        godFavor.weakenBy(amountOfWeaken);
+    }
 }

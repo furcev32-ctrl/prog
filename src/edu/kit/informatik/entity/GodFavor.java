@@ -1,39 +1,42 @@
 package edu.kit.informatik.entity;
 
-import edu.kit.informatik.Main;
+import edu.kit.informatik.Player;
 
-public enum GodFavor {
-    TS("Thor's Strike"),
-    TT("Thrymr’s Theft "),
-    IR("Idun’s Regeneration");
+public class GodFavor {
+    public int level;
+    public GodFavorType type;
+    public int cost;
 
-    private final String name;
-    private int level;
-
-    GodFavor(String name) {
-        this.name = name;
-    }
-
-    public void setLevel(int level) {
+    public GodFavor(GodFavorType type, int level) {
         this.level = level;
+        this.type = type;
+        this.cost = type.getCost(level);
     }
 
+    public void executeEffect(Player actor, Player victim) {
 
-    public static String getRegex() {
-        StringBuilder result = new StringBuilder();
-        for (GodFavor favor: values()) {
-            result.append(Main.PIPE).append(favor.name());
+        if (actor.hasEnoughPower(cost)) {
+            type.executeEffect(level, actor, victim);
         }
-        return result.substring(Main.CUTTING_INDEX);
+
     }
 
-    public static GodFavor parseToGodFavor(String godFavorAsString) {
-        for (GodFavor godFavor : values()) {
-            if (godFavorAsString.contains(godFavor.toString())) {
-                return godFavor;
-            }
-        }
-        return null;
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
+    public GodFavorType getType() {
+        return type;
+    }
+
+    public void weakenBy(int i) {
+        level = level + i;
+        level = Math.max(level, 0);
+    }
 }
+

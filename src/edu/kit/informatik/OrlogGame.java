@@ -15,7 +15,6 @@ public class OrlogGame {
     private GamePhase currentPhase;
 
 
-
     public OrlogGame(Player[] players) {
         isRunning = true;
         this.players = players;
@@ -28,19 +27,19 @@ public class OrlogGame {
         return isRunning;
     }
 
-    public void quit() {
+    public void quitCommand() {
         isRunning = false;
     }
 
-    public String print() {
+    public String printCommand() {
         StringBuilder result = new StringBuilder();
-        for(Player player: players) {
+        for (Player player : players) {
             result.append(Main.NEW_LINE).append(player.toString());
         }
         return result.substring(Main.CUTTING_INDEX);
     }
 
-    public String roll(DiceFace[] diceFaces) throws SemanticsException {
+    public String rollCommand(DiceFace[] diceFaces) throws SemanticsException {
 
         checkRollConditions(diceFaces);
         currentPlayer.roll(diceFaces);
@@ -49,7 +48,7 @@ public class OrlogGame {
     }
 
 
-    public String turn() throws SemanticsException {
+    public String turnCommand() throws SemanticsException {
 
         checkTurnConditions();
 
@@ -59,42 +58,43 @@ public class OrlogGame {
     }
 
 
-
-    public String godfavor(GodFavor godFavor, int level) throws SemanticsException {
-        checkGodFavorConditions(godFavor, level);
-        godFavor.setLevel(level);
+    public String godfavorCommand(GodFavor godFavor) throws SemanticsException {
+        checkGodFavorConditions(godFavor);
         currentPlayer.chooseGodFavor(godFavor);
-
         return Main.OK;
     }
 
 
-    public String evaluate() throws SemanticsException {
+    public String evaluateCommand() throws SemanticsException {
         checkEvaluate();
 
         players[0].fight(players[1].getAttackVector());
         players[1].fight(players[0].getAttackVector());
 
+        if (players[0].getGodFavor().getType().getPriority() >= players[1].getGodFavor().getType().getPriority()) {
+            players[0].getGodFavor().executeEffect(players[0], players[1]);
+        }
+        else {
+            players[1].getGodFavor().executeEffect(players[1], players[0]);
+        }
 
         if (players[0].getLivePoints() == 0 && players[1].getLivePoints() == 0) {
 
             return Main.DRAW;
-        }
-        else if (players[0].getLivePoints() == 0) {
+        } else if (players[0].getLivePoints() == 0) {
             return players[1].getName() + Main.SPACE + Main.WINS;
-        }
-        else if (players[1].getLivePoints() == 0) {
+        } else if (players[1].getLivePoints() == 0) {
             return players[0].getName() + Main.SPACE + Main.WINS;
         }
 
-        return print();
+        return printCommand();
     }
 
 
     private int getArrIndexOfPlayer(Player player) {
 
-        for(int i = 0; i < players.length; i++) {
-            if(players[i] == player) {
+        for (int i = 0; i < players.length; i++) {
+            if (players[i] == player) {
                 return i;
             }
         }
@@ -103,12 +103,12 @@ public class OrlogGame {
     }
 
     private void checkRollConditions(DiceFace[] diceFaces) throws SemanticsException {
-        if(currentPhase != ROLLING_PHASE) {
+        if (currentPhase != ROLLING_PHASE) {
             throw new SemanticsException("You can't roll in the " + currentPhase.getName() + ".");
         }
 
         int numOfDiceFacesWithGodPower = 0;
-        for (DiceFace diceFace: diceFaces) {
+        for (DiceFace diceFace : diceFaces) {
             if (diceFace.hasGodPower()) {
                 numOfDiceFacesWithGodPower++;
             }
@@ -127,8 +127,7 @@ public class OrlogGame {
             if (currentPhase == GOD_FAVOR_PHASE) {
                 if (currentPlayer.getGodFavor() != null) {
                     throw new SemanticsException("You have to execute the evaluation command.");
-                }
-                else {
+                } else {
                     throw new SemanticsException("You could choose a god favor or execute the evaluation command.");
                 }
             }
@@ -137,20 +136,20 @@ public class OrlogGame {
     }
 
 
-    private void checkGodFavorConditions(GodFavor godFavor, int level) throws SemanticsException {
-        if (level < Main.MIN_GODFAVOR_LEVEL || level > Main.MAX_GODFAVOR_LEVEL) {
+    private void checkGodFavorConditions(GodFavor godFavor) throws SemanticsException {
+        if (godFavor.getLevel() < Main.MIN_GOD_FAVOR_LEVEL || godFavor.getLevel() > Main.MAX_GOD_FAVOR_LEVEL) {
             throw new SemanticsException("The god favor level should be between "
-                    + Main.MIN_GODFAVOR_LEVEL + " and " + Main.MAX_GODFAVOR_LEVEL + ".");
+                    + Main.MIN_GOD_FAVOR_LEVEL + " and " + Main.MAX_GOD_FAVOR_LEVEL + ".");
         }
 
     }
 
     private void checkEvaluate() throws SemanticsException {
         // TODO: 15.01.2022 could the second user execute the evaluate command in the Rolling phase.
-        if(currentPhase == EVALUATION_PHASE) {
+        if (currentPhase == EVALUATION_PHASE) {
             throw new SemanticsException("The evaluation could be done only once.");
         }
-        if(!isLastPlayer(currentPlayer)) {
+        if (!isLastPlayer(currentPlayer)) {
             throw new SemanticsException("You should give you turn to the next player. The last " +
                     "player could execute the evaluate command.");
         }
