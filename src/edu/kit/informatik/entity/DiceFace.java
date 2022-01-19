@@ -13,8 +13,8 @@ public enum DiceFace {
     GMD(true, DEFEND, CLOSE, 1),
     RA(false, ATTACK, RANGED, 1),
     GRA(true, ATTACK, RANGED, 1),
-    RD(false, ATTACK, RANGED, 1),
-    GRD(true, ATTACK, RANGED, 1),
+    RD(false, DEFEND, RANGED, 1),
+    GRD(true, DEFEND, RANGED, 1),
     ST(false, ATTACK, WHEREVER, 1),
     GST(true, ATTACK, WHEREVER, 1);
 
@@ -32,15 +32,15 @@ public enum DiceFace {
 
     public static String getRegex() {
         StringBuilder result = new StringBuilder();
-        for (DiceFace type: values()) {
+        for (DiceFace type : values()) {
             result.append(Main.PIPE).append(type.name());
         }
         return result.substring(Main.CUTTING_INDEX);
     }
 
-     public static DiceFace parseToDiceFace(String diceFaceAsString) {
+    public static DiceFace parseToDiceFace(String diceFaceAsString) {
         for (DiceFace diceFace : values()) {
-            if (diceFaceAsString.contains(diceFace.toString())) {
+            if (diceFaceAsString.equalsIgnoreCase(diceFace.toString())) {
                 return diceFace;
             }
         }
@@ -52,18 +52,21 @@ public enum DiceFace {
     }
 
     public Vector getVector() {
-        if(this.range == CLOSE) {
+        if (this.range == CLOSE) {
             return new Vector(new int[]{this.fightPower, 0});
-        }
-        else if(this.range == RANGED) {
+        } else if (this.range == RANGED) {
             return new Vector(new int[]{0, this.fightPower});
-        }
-        else {
+        } else {
             return null;
         }
     }
 
     public FightType getFightType() {
         return fightType;
+    }
+
+    @Override
+    public String toString() {
+        return name();
     }
 }

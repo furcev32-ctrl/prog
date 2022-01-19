@@ -53,7 +53,7 @@ public enum Command {
             final String[] arguments = input.group(Main.FIRST_PARAMETER_INDEX).split(Main.SEMICOLON);
             final int level = Integer.parseInt(arguments[1]);
             final GodFavor godFavor = new GodFavor(GodFavorType.parseToGodFavorType(arguments[0]), level);
-            return game.godfavorCommand(godFavor);
+            return game.godFavorCommand(godFavor);
         }
     },
     TURN(Main.TURN) {

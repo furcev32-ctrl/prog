@@ -1,6 +1,7 @@
 package edu.kit.informatik;
 
 import edu.kit.informatik.entity.DiceFace;
+import edu.kit.informatik.entity.GodFavorType;
 import edu.kit.informatik.entity.Vector;
 import edu.kit.informatik.entity.GodFavor;
 
@@ -10,44 +11,52 @@ import static edu.kit.informatik.entity.FightType.DEFEND;
 public class Player {
 
     private String name;
-    private int livePoints;
+    private long livePoints;
     private int godPower;
-    private final Vector attackVector;
-    private final Vector defenseVector;
+    private Vector attackVector;
+    private Vector defenseVector;
+    private int amountOfStealing;
     private GodFavor godFavor;
-    private boolean hasRolled;
+    private int numOfRoll;
 
-    public Player(String name, int livePoints, int godPower) {
+    public Player(String name, long livePoints, int godPower) {
         this.name = name;
         this.livePoints = livePoints;
         this.godPower = godPower;
-        this.hasRolled = false;
+        this.numOfRoll = 0;
+        amountOfStealing = 0;
         attackVector = new Vector(new int[]{0, 0});
         defenseVector = new Vector(new int[]{0, 0});
     }
 
     public void roll(DiceFace[] diceFaces) {
-        for (DiceFace diceFace:diceFaces) {
-            if(diceFace.hasGodPower()) {
+        for (DiceFace diceFace : diceFaces) {
+            if (diceFace.hasGodPower()) {
                 godPower++;
             }
-            if(diceFace == DiceFace.ST || diceFace == DiceFace.GST) {
+            if (diceFace == DiceFace.ST || diceFace == DiceFace.GST) {
+                amountOfStealing++;
                 continue;
             }
             if (diceFace.getFightType() == ATTACK) {
                 attackVector.add(diceFace.getVector());
-            }
-            else if(diceFace.getFightType() == DEFEND) {
+            } else if (diceFace.getFightType() == DEFEND) {
                 defenseVector.add(diceFace.getVector());
             }
         }
-        hasRolled = true;
+        numOfRoll++;
     }
 
-    public void fight(Vector attackingVector) {
+    public void attackWithDiceFacesTo(Player victim) {
+        victim.defendAgainst(this.getAttackVector());
+        attackVector = Vector.nullVector();
+    }
+
+    public void defendAgainst(Vector attackingVector) {
         defenseVector.sub(attackingVector);
-        livePoints = livePoints + defenseVector.getSumOfValues();
+        livePoints = livePoints + defenseVector.getSumOfNegativeEntries();
         livePoints = Math.max(livePoints, 0);
+        defenseVector = Vector.nullVector();
     }
 
     public void chooseGodFavor(GodFavor godFavor) {
@@ -58,20 +67,12 @@ public class Player {
         return name;
     }
 
-    public int getGodPower() {
-        return godPower;
-    }
-
     public Vector getAttackVector() {
         return attackVector;
     }
 
-    public int getLivePoints() {
-        return livePoints;
-    }
-
-    public boolean hasRolled() {
-        return hasRolled;
+    public void resetNumOfRoll() {
+        numOfRoll = 0;
     }
 
     @Override
@@ -81,19 +82,13 @@ public class Player {
 
 
     public void changeLifePointsBy(int amount) {
-        if (livePoints == 0 || livePoints > Integer.MAX_VALUE - amount) {
-            return;
-        }
         livePoints = livePoints + amount;
         livePoints = Math.max(livePoints, 0);
     }
 
-
     public void changeGodPowerBy(int amount) {
-        if (godPower == 0 || godPower > Integer.MAX_VALUE - amount) {
-            return;
-        }
         godPower = godPower + amount;
+        godPower = Math.max(godPower, 0);
     }
 
     public boolean hasEnoughPower(int cost) {
@@ -105,6 +100,37 @@ public class Player {
     }
 
     public void weakenBy(int amountOfWeaken) {
-        godFavor.weakenBy(amountOfWeaken);
+        if (godFavor != null) {
+            godFavor.weakenBy(amountOfWeaken);
+        }
+    }
+
+    public void attackWithGodFavorTo(Player victim) {
+        final int cost = godFavor.getCost();
+        if (hasEnoughPower(cost)) {
+            godFavor.executeEffect(this, victim);
+            godPower = godPower - cost;
+        }
+        godFavor = null;
+    }
+
+    public boolean isDead() {
+        return livePoints == 0;
+    }
+
+    public int getNumOfRoll() {
+        return numOfRoll;
+    }
+
+    public int getAmountOfStealing() {
+        return amountOfStealing;
+    }
+
+    public void resetPlayersAmountOfStealing() {
+        amountOfStealing = 0;
+    }
+
+    public int getGodPower() {
+        return godPower;
     }
 }

@@ -24,13 +24,18 @@ public class Vector {
         }
     }
 
-    public int getSumOfValues() {
-        int result = 0;
 
+    public int getSumOfNegativeEntries() {
+        int sum = 0;
         for (int value : values) {
-            result = value;
+            if (value < 0) {
+                sum = sum + value;
+            }
         }
-        return result;
+        return sum;
     }
 
+    public static Vector nullVector() {
+        return new Vector(new int[]{0, 0});
+    }
 }

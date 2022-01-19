@@ -15,15 +15,13 @@ public class GodFavor {
 
     public void executeEffect(Player actor, Player victim) {
 
-        if (actor.hasEnoughPower(cost)) {
-            type.executeEffect(level, actor, victim);
-        }
+        type.executeEffect(level, actor, victim);
+
 
     }
 
-
-    public void setCost(int cost) {
-        this.cost = cost;
+    public int getCost() {
+        return cost;
     }
 
     public int getLevel() {
@@ -34,8 +32,8 @@ public class GodFavor {
         return type;
     }
 
-    public void weakenBy(int i) {
-        level = level + i;
+    public void weakenBy(int amountOfWeaken) {
+        level = level + amountOfWeaken;
         level = Math.max(level, 0);
     }
 }

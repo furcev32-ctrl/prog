@@ -10,24 +10,33 @@ public enum GodFavorType {
     TS(1) {
         @Override
         public int getCost(int level) {
-            return switch (level) {
-                case 1 -> 4;
-                case 2 -> 8;
-                case 3 -> 12;
-                default -> 0;
-            };
-
-
+            switch (level) {
+                case 1:
+                    return 4;
+                case 2:
+                    return 8;
+                case 3:
+                    return 12;
+            }
+            return 0;
         }
 
         @Override
         public void executeEffect(int level, Player actor, Player victim) {
-            final int damage = switch (level) {
-                case 1 -> 2;
-                case 2 -> 5;
-                case 3 -> 8;
-                default -> 0;
-            };
+            final int damage;
+            switch (level) {
+                case 1:
+                    damage = 2;
+                    break;
+                case 2:
+                    damage = 5;
+                    break;
+                case 3:
+                    damage = 8;
+                    break;
+                default:
+                    damage = 0;
+            }
             victim.changeLifePointsBy(-1 * damage);
         }
 
@@ -38,23 +47,34 @@ public enum GodFavorType {
     TT(3) {
         @Override
         public int getCost(int level) {
-            return switch (level) {
-                case 1 -> 3;
-                case 2 -> 6;
-                case 3 -> 9;
-                default -> 0;
-            };
+            switch (level) {
+                case 1:
+                    return 3;
+                case 2:
+                    return 6;
+                case 3:
+                    return 9;
+            }
+            return 0;
         }
 
         @Override
         public void executeEffect(int level, Player actor, Player victim) {
-            final int amountOfWeaken = switch (level) {
-                case 1 -> 1;
-                case 2 -> 2;
-                case 3 -> 3;
-                default -> 0;
-            };
-            victim.weakenBy(amountOfWeaken);
+            final int amountOfWeaken;
+            switch (level) {
+                case 1:
+                    amountOfWeaken = 1;
+                    break;
+                case 2:
+                    amountOfWeaken = 2;
+                    break;
+                case 3:
+                    amountOfWeaken = 3;
+                    break;
+                default:
+                    amountOfWeaken = 0;
+            }
+            victim.weakenBy(-1 * amountOfWeaken);
         }
 
     },
@@ -64,22 +84,33 @@ public enum GodFavorType {
     IR(2) {
         @Override
         public int getCost(int level) {
-            return switch (level) {
-                case 1 -> 4;
-                case 2 -> 7;
-                case 3 -> 10;
-                default -> 0;
-            };
+            switch (level) {
+                case 1:
+                    return 4;
+                case 2:
+                    return 7;
+                case 3:
+                    return 10;
+            }
+            return 0;
         }
 
         @Override
         public void executeEffect(int level, Player actor, Player victim) {
-            final int amountOfHeal = switch (level) {
-                case 1 -> 2;
-                case 2 -> 4;
-                case 3 -> 6;
-                default -> 0;
-            };
+            final int amountOfHeal;
+            switch (level) {
+                case 1:
+                    amountOfHeal = 2;
+                    break;
+                case 2:
+                    amountOfHeal = 4;
+                    break;
+                case 3:
+                    amountOfHeal = 6;
+                    break;
+                default:
+                    amountOfHeal = 0;
+            }
             actor.changeLifePointsBy(amountOfHeal);
         }
     };
